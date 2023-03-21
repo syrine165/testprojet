@@ -1,0 +1,38 @@
+.brand_control{
+    width: 50px;
+    height:50px;
+    border-right: 1px solid whitesmoke;
+}
+
+.go-down{
+    margin-top: 3px;
+}
+
+.date-text-design{
+    font-size: 15px;
+    font-weight: bold;
+    color: orangered;
+}
+
+.img-user-control{
+    display: block;
+    margin-left: auto;
+    margin-top: 10px;
+    margin-right:auto;
+    width: 70px;
+
+}
+
+table {
+  border: 1px solid black;
+}
+
+.fixed_footer{
+	position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: red;
+  color: white;
+  text-align: center;
+}

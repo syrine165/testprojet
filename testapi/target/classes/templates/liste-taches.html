@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<div th:insert="~{fragments/head::head}"></div>
+
+<body data-bs-theme="light" class="d-flex flex-column min-vh-100">
+  <!-- start NavBar-->
+<div th:insert="~{fragments/navbar::navbar}"></div>
+  <!--END NavBar-->
+
+  <!--Start Container-->
+  <div class="container go-down">
+
+    <div class="d-flex justify-content-end">
+      <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addModal"
+        data-whatever="@mdo">
+        Add Tache
+      </button>
+
+      <!--Add Modal-->
+      <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header bg-primary
+                ">
+              <h5 class="modal-title" id="exampleModalLabel">Ajout Tache: </h5>
+              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+              </button>
+            </div>
+            <div class="modal-body">
+              <form th:action="@{/create-tache}" th:object="${t}" method="POST">
+                <div class="form-group">
+                  <label for="#" class="col-form-label">Titre:</label>
+                  <input type="text" class="form-control" placeholder="titre" th:field="*{titre}" required>
+                </div>
+                <div class="form-group">
+                  <label for="#" class="col-form-label">Description:</label>
+                  <textarea class="form-control" placeholder="Description" th:field="*{description}" required></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="#" class="col-form-label">datecreation:</label>
+                  <input type="date" class="form-control" placeholder="datecreation" th:field="*{datecreation}" required>
+                </div>
+                <div class="form-group">
+                  <label for="#" class="col-form-label">Etat:</label>
+                  <select class="form-select" aria-label="" th:field="*{etat}" required>
+                    <option value="a faire">a faire</option>
+                    <option value="en cours">En cours</option>
+                    <option value="en attente">En attente</option>
+                    <option value="terminée">Terminee</option>
+                  </select>
+                </div>
+
+             
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Ajouter</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--Add Modal-->
+    </div>
+    
+    <!--Alerte Creation-->
+    <div class="alert alert-success go-down" role="alert" th:if="${message_ajout}">
+    <strong th:text="${message_ajout}"></strong>
+    </div>
+    
+<!--Alerte Delete-->
+    <div class="alert alert-danger go-down" role="alert" th:if="${message_delete}">
+    <strong th:text="${message_delete}"></strong>
+    </div>
+
+<!--Alerte Modify-->
+    <div class="alert alert-warning go-down" role="alert" th:if="${message_modifier}">
+    <strong th:text="${message_modifier}"></strong>
+    </div>
+
+
+
+    </br>
+    <h3>Table Taches</h3>
+    <table class="table go-down" id="table-data">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Titre</th>
+          <th scope="col">Description</th>
+          <th scope="col">Date création</th>
+          <th scope="col">Etat</th>
+          <th scope="col">Info</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="tache:${taches}">
+          <th scope="row"><img th:src="@{/assets/img/tache.jpg}" class="img-user-control" style="width:35px"></th>
+          <td>[[${tache.titre}]]</td>
+          <td>[[${tache.description}]]</td>
+          <td class="date-text-design" th:text="${#dates.format(tache.datecreation,'dd-MM-yyyy')}"></td>
+          <td>[[${tache.etat}]]</td>
+          <td>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" 
+            th:attr="data-bs-target='#infoModal'+*{tache.id}">
+              Info
+            </button>
+            <!--Info modal-->
+            <div class="modal" th:id="*{'infoModal'+{tache.id}}" tabindex="-1" role="dialog">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header bg-info">
+                    <h5 class="modal-title">Info Tache:</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+
+                    <div class="card" style="width: 18rem; text-align:center">
+                      <img class="img-user-control" src="/assets/img/tache.jpg">
+                      <div class="card-body">
+                        <h5 class="card-title">Info Tache:</h5>
+                      </div>
+                      <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Titre: [[${tache.titre}]]</li>
+                        <li class="list-group-item">Descrition: [[${tache.description}]]</li>
+                        <li class="list-group-item">Date création: <span th:text="${#dates.format(tache.datecreation,'dd-MM-yyyy')}"></span></li>
+                        <li class="list-group-item">Etat: [[${tache.etat}]]</li>
+                      </ul>
+                    </div>
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td>
+           <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                            th:attr="data-bs-target='#modifierModal'+*{tache.id} ">
+                            modifier
+                        </button>
+                        <div class="modal fade" th:id="*{'modifierModal'+{tache.id}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-warning ">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modifier Tache</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form th:action="@{/update-tache}">
+                                                <input type="hidden" class="form-control" name="id" th:value="${tache.id}">
+                                            <div class="mb-3">
+                                                <label for="recipient-name" class="col-form-label">Titre: </label>
+                                                <input class="form-control" aria-label="" name="titre" th:value="${tache.titre}">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="recipient-name" class="col-form-label">Description: </label>
+                                                 <textarea class="form-control" name="description" >[[${tache.description}]]</textarea>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="recipient-name" class="col-form-label">Datecreation</label>
+                                                <input type="date" class="form-control" name="datecreation" th:value="${tache.datecreation}">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="recipient-name" class="col-form-label">Etat: </label>
+                                                <select class="form-select" aria-label="" name="etat" th:value="${tache.etat}">
+                                                    <option selected>choisir etat:</option>
+                                                    <option value="a faire">a faire</option>
+                                                    <option value="en cours">en cours</option>
+                                                    <option value="en attente">en attente</option>
+                                                    <option value="terminee">terminee</option>
+                                                </select>
+                                            </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">fermer</button>
+                                        <button type="submit" class="btn btn-warning">modifier</button>
+                                    </div></form>
+                                </div>
+                            </div>
+                        </div>
+            <!--Edit Modal-->
+
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" 
+            th:attr="data-bs-target='#supprimerModal'+*{tache.id}">
+              Supprimer
+            </button>
+            <!--Delete Modal-->
+            <div class="modal" tabindex="-1" role="dialog" th:id="*{'supprimerModal'+{tache.id}}">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header bg-danger">
+                    <h5 class="modal-title">Confirmation: </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <span>>Etes vous sûre de supprimer cette tache: [[${tache.id}]]?</span>
+                  </div>
+                  <div class="modal-footer">
+                    <form action="/delete-tache">
+                        <input type="hidden" class="form-control" name="id" th:value="${tache.id}">
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                    </form>
+                    
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--Delete Modal-->
+          </td>
+
+        </tr>
+      </tbody>
+      <!--tfoot>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Titre</th>
+              <th scope="col">Description</th>
+              <th scope="col">Date création</th>
+              <th scope="col">Etat</th>
+              <th scope="col">Info</th>
+              <th scope="col">Action</th>
+            </tr>
+          </tfoot!-->
+    </table>
+  </div>
+  <!--Start Footer!-->
+<div th:insert="~{fragments/footer::footer}"></div>
+<!--End Footer!-->
+<script>
+ $(document).ready(function () {
+    $('#table-data').DataTable(
+	{
+		order:([0,'desc']),
+		lengthMenu:[2, 5, 10, 20, 50, 100],
+}
+);
+});
+</script>
+</body>
+
+</html>
